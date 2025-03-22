@@ -15,7 +15,7 @@ plugins {
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
-    
+
 }
 
 repositories {
@@ -29,6 +29,12 @@ dependencies {
     implementation("io.ktor:ktor-server-core:2.3.9")
     implementation("io.ktor:ktor-server-netty:2.3.9")
 
+    implementation("io.ktor:ktor-client-core:2.3.9")
+    implementation("io.ktor:ktor-client-cio:2.3.9")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // Json 
@@ -37,7 +43,7 @@ dependencies {
 
     // Use the Kotlin JUnit 5 integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    
+
     // testImplementation("org.jetbrains.kotlin:kotlin-test")
 
     // Use the JUnit 5 integration.
@@ -71,16 +77,16 @@ tasks.jar {
     // this line is telling compiler main file inside the Jar file
     manifest {
         attributes["Main-Class"] = "appkt.AppKt"
-    } 
-            //main source has to be included in jar file
-        from(sourceSets.main.get().output) 
-            // source code is depends on the confgured classpathes
-        dependsOn(configurations.runtimeClasspath) 
-            // this is finding jar file from the dependencies and find ziptrees which represent content of Jar file
-        from({
-            configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-        })
-            // this line make sure that if there is duplicated config file in different dependencies, only one file will be included in Jar so that it won't be duplicated
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE 
-    
+    }
+    //main source has to be included in jar file
+    from(sourceSets.main.get().output)
+    // source code is depends on the confgured classpathes
+    dependsOn(configurations.runtimeClasspath)
+    // this is finding jar file from the dependencies and find ziptrees which represent content of Jar file
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+    // this line make sure that if there is duplicated config file in different dependencies, only one file will be included in Jar so that it won't be duplicated
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
 }
