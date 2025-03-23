@@ -71,8 +71,12 @@ application {
 
 }
 
-tasks.register("startServer", StartServerTask::class)
-tasks.register("stopServer", StopServerTask::class)
+tasks.register("startServer", StartServerTask::class) {
+    outputs.upToDateWhen { false }
+}
+tasks.register("stopServer", StopServerTask::class) {
+    outputs.upToDateWhen { false }
+}
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.

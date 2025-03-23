@@ -33,6 +33,6 @@ abstract class StartServerTask : DefaultTask() {
         pidFile.writeText(pid.toString())
 
         println("Server started (PID: $pid)")
-        Thread.sleep(10000)
+        Thread.sleep(3000)
     }
 }
