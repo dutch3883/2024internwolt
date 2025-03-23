@@ -28,7 +28,7 @@ import appkt.reqDataVerifyKt.ReqDataVerify
 import appkt.resDataVerifyKt.ResDataVerify
 
 // for receive & respond
-import io.ktor.server.request.* 
+import io.ktor.server.request.*
 
 // @Serializable
 // data class Data(val a: Int, val b: String)
@@ -43,14 +43,14 @@ data class FeeCalcRequest(
 
 
 @Serializable
-data class FeecCalcResponse(
+data class FeeCalcResponse(
     val delivery_fee: Int
 )
 
 class Server {
-    
-    fun deliveryFeeServerConfig() {
-        embeddedServer(Netty, port = 8080) {
+
+    fun deliveryFeeServerConfig(port: Int = 8080) {
+        embeddedServer(Netty, port = port) {
 
             install(ContentNegotiation){
                 json(Json{ignoreUnknownKeys = false})
@@ -63,23 +63,26 @@ class Server {
                         // verify incoming request
                         val request: FeeCalcRequest = call.receive<FeeCalcRequest>()
                         ReqDataVerify().invalidateRequest(request)
-        
+
                         // Fee calculation
                         val finalFee = ResDataVerify().calculateDeliveryFee(request)
-        
+
                         //Response to Clients
-                        call.respond(FeecCalcResponse(finalFee))
-        
-                    } catch (e: BadRequestException) {                   
+                        call.respond(FeeCalcResponse(finalFee))
+
+                    } catch (e: BadRequestException) {
                         call.respond(HttpStatusCode.BadRequest, "400: Invalid request format\nType of values are wrong or invalid key included\n\nExample of expected request:\n{\"cart_value\": 10, \"delivery_distance\": 1000, \"number_of_items\": 5, \"time\": \"2024-01-01T12:00:00Z\"}")
                         // e.printStackTrace()
                     } catch (e: Exception) {
                         call.respond(HttpStatusCode.InternalServerError, "500: Internal Server Errorr")
                         // e.printStackTrace()
                     }
-
-
                 }
+
+                get("/healthcheck") {
+                    call.respondText("OK")
+                }
+
             }
         }.start(wait = true)
     }
